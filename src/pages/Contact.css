@@ -1,0 +1,18 @@
+.contact-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .contact-details h3 {
+    color: #34495e;
+  }
+  
+  .social-links a {
+    display: inline-block;
+    margin: 10px;
+    color: #007bff;
+    text-decoration: none;
+  }
+  

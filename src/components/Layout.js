@@ -1,99 +1,78 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, CssBaseline, Box } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+import HelpIcon from '@mui/icons-material/Help';
+import GavelIcon from '@mui/icons-material/Gavel';
+import { Link } from 'react-router-dom';
 
-const drawerWidth = 260;
+const drawerWidth = 240;
 
 const Layout = ({ children }) => {
-return (
+  return (
     <Box sx={{ display: 'flex' }}>
-    <CssBaseline />
-
-      {/* Sidebar */}
-    <Drawer
+      <Drawer
         variant="permanent"
         sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
-            background: 'linear-gradient(135deg, #1E1E2F, #3A3A55)',
-            color: '#fff',
-            borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-            transition: '0.3s ease-in-out',
-        },
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', backgroundColor: '#1E1E2F', color: '#FFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' },
         }}
-    >
-        <Toolbar />
-        <List>
-        <ListItem
-            button
-            component={Link}
-            to="/"
-            sx={{
-            '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
-            padding: '15px 20px',
-            }}
-        >
-            <ListItemIcon sx={{ color: 'white' }}>
-            <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" sx={{ color: 'white', fontSize: '18px' }} />
-        </ListItem>
+      >
+        {/* Logo Section */}
+        <Box sx={{ textAlign: 'center', py: 2 }}>
+          <img src="/logo.png" alt="Leadvala Logo" style={{ width: '80px', marginBottom: '10px' }} />
+        </Box>
 
-        <ListItem
-            button
-            component={Link}
-            to="/documents"
-            sx={{
-            '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
-            padding: '15px 20px',
-            }}
-        >
-            <ListItemIcon sx={{ color: 'white' }}>
-            <DescriptionIcon />
-            </ListItemIcon>
-            <ListItemText primary="My Documents" sx={{ color: 'white', fontSize: '18px' }} />
-        </ListItem>
+        {/* Main Navigation (Dashboard & Documents) */}
+        <List>
+          <ListItem button component={Link} to="/">
+            <ListItemIcon sx={{ color: '#FFF' }}><DashboardIcon /></ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+
+          <ListItem button component={Link} to="/documents">
+            <ListItemIcon sx={{ color: '#FFF' }}><DescriptionIcon /></ListItemIcon>
+            <ListItemText primary="My Documents" />
+          </ListItem>
         </List>
-    </Drawer>
+
+        {/* Bottom Section (Additional Pages) */}
+        <Box sx={{ mt: 'auto' }}>
+          <Divider sx={{ backgroundColor: 'rgba(255,255,255,0.2)', mb: 1 }} />
+
+          <List>
+            <ListItem button component={Link} to="/about">
+              <ListItemIcon sx={{ color: '#FFF' }}><InfoIcon /></ListItemIcon>
+              <ListItemText primary="About Us" />
+            </ListItem>
+
+            <ListItem button component={Link} to="/contact">
+              <ListItemIcon sx={{ color: '#FFF' }}><ContactMailIcon /></ListItemIcon>
+              <ListItemText primary="Contact Us" />
+            </ListItem>
+
+            <ListItem button component={Link} to="/help">
+              <ListItemIcon sx={{ color: '#FFF' }}><HelpIcon /></ListItemIcon>
+              <ListItemText primary="Help" />
+            </ListItem>
+
+            <ListItem button component={Link} to="/terms">
+              <ListItemIcon sx={{ color: '#FFF' }}><GavelIcon /></ListItemIcon>
+              <ListItemText primary="Terms & Conditions" />
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
 
       {/* Main Content Area */}
-    <Box
-        component="main"
-        sx={{
-        flexGrow: 1,
-        p: 3,
-        background: 'linear-gradient(180deg, #F0F2F5, #FFFFFF)',
-        minHeight: '100vh',
-        }}
-    >
-        {/* Top Bar */}
-        <AppBar
-        position="fixed"
-        sx={{
-            width: `calc(100% - ${drawerWidth}px)`,
-            ml: `${drawerWidth}px`,
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
-        }}
-        >
-        <Toolbar>
-            <Typography variant="h5" fontWeight="bold" sx={{ color: '#333' }}>
-            Legal Vault System
-            </Typography>
-        </Toolbar>
-        </AppBar>
-
-        <Toolbar /> {/* Space to push content below AppBar */}
+      <Box component="main" sx={{ flexGrow: 1, bgcolor: '#F4F6F9', height: '100vh', padding: 5 }}>
         {children}
+      </Box>
     </Box>
-    </Box>
-);
+  );
 };
 
 export default Layout;
