@@ -6,6 +6,8 @@ import ArticleIcon from '@mui/icons-material/Article';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from 'react-router-dom';
+import Chatbot from '../components/Chatbot'; // Import Chatbot
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [selectedDoc, setSelectedDoc] = useState(null);
@@ -97,6 +99,9 @@ const Dashboard = () => {
       >
         Generate Document
       </Button>
+
+      {/* Chatbot in Bottom Right */}
+      <Chatbot />
     </Box>
   );
 };

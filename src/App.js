@@ -17,7 +17,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<Auth setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/login" element={<Auth setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/dashboard" element={isAuthenticated ? <Layout><Dashboard /></Layout> : <Auth setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
