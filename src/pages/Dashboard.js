@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Card, CardContent, Box, Button } from '@mui/material';
+import { Typography, Grid, Card, CardContent, Box, Button, TextField, List, ListItem, ListItemText, MenuItem, Select } from '@mui/material';
 import StorageIcon from '@mui/icons-material/Description';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArticleIcon from '@mui/icons-material/Article';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useNavigate } from 'react-router-dom';
-import Chatbot from '../components/Chatbot'; // Import Chatbot
-import './Dashboard.css';
+import Chatbot from '../components/Chatbot'; // Chatbot remains in the dashboard
+import './Dashboard.css'; // Ensure styles exist
 
 const Dashboard = () => {
   const [selectedDoc, setSelectedDoc] = useState(null);
+  const [collaborators, setCollaborators] = useState([]);
+  const [newCollaborator, setNewCollaborator] = useState('');
+  const [role, setRole] = useState('Viewer'); // Default role
   const navigate = useNavigate();
 
   const documentTypes = [
@@ -25,13 +29,23 @@ const Dashboard = () => {
     }
   };
 
+  const addCollaborator = () => {
+    if (/^\d{10}$/.test(newCollaborator)) { // Validate 10-digit phone number
+      setCollaborators([...collaborators, { phone: newCollaborator, role }]);
+      setNewCollaborator('');
+      setRole('Viewer'); // Reset to default role
+    } else {
+      alert("Please enter a valid 10-digit phone number.");
+    }
+  };
+
   return (
-    <Box textAlign="center">
+    <Box textAlign="center" className="dashboard-container">
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2, color: '#333' }}>
         Welcome to Legal Vault
       </Typography>
       <Typography variant="subtitle1" sx={{ mb: 4, color: '#666' }}>
-        Securely manage, verify, and store your legal documents on blockchain.
+        Securely manage, verify, and collaborate on your legal documents with blockchain.
       </Typography>
 
       {/* Feature Cards */}
@@ -99,6 +113,54 @@ const Dashboard = () => {
       >
         Generate Document
       </Button>
+
+      {/* Multi-User Collaboration Section */}
+      <Box sx={{ mt: 5, p: 3, borderRadius: 3, boxShadow: '0px 5px 10px rgba(0,0,0,0.1)', background: '#F9F9F9' }}>
+        <Typography variant="h5" fontWeight="bold">Collaborate with Others</Typography>
+        <Typography variant="subtitle1" sx={{ mb: 2, color: '#666' }}>
+          Invite team members to collaborate on your legal documents.
+        </Typography>
+
+        {/* Add Collaborator Input */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 3 }}>
+          <TextField
+            label="Enter 10-digit phone number"
+            variant="outlined"
+            value={newCollaborator}
+            onChange={(e) => setNewCollaborator(e.target.value)}
+            sx={{ width: '250px' }}
+          />
+          <Select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            variant="outlined"
+            sx={{ width: '150px' }}
+          >
+            <MenuItem value="Viewer">Viewer</MenuItem>
+            <MenuItem value="Editor">Editor</MenuItem>
+            <MenuItem value="Signer">Signer</MenuItem>
+          </Select>
+          <Button
+            variant="contained"
+            startIcon={<PersonAddIcon />}
+            onClick={addCollaborator}
+            sx={{ backgroundColor: '#43A047', '&:hover': { backgroundColor: '#388E3C' } }}
+          >
+            Add
+          </Button>
+        </Box>
+
+        {/* Collaborators List */}
+        {collaborators.length > 0 && (
+          <List>
+            {collaborators.map((collab, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={`📱 ${collab.phone}`} secondary={`Role: ${collab.role}`} />
+              </ListItem>
+            ))}
+          </List>
+        )}
+      </Box>
 
       {/* Chatbot in Bottom Right */}
       <Chatbot />
