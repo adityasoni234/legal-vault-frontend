@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Card, CardContent, Box, Button, TextField, List, ListItem, ListItemText, MenuItem, Select } from '@mui/material';
+import { Typography, Grid, Card, CardContent, Box, Button, Avatar, TextField } from '@mui/material';
 import StorageIcon from '@mui/icons-material/Description';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArticleIcon from '@mui/icons-material/Article';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
-import Chatbot from '../components/Chatbot'; // Chatbot remains in the dashboard
-import './Dashboard.css'; // Ensure styles exist
+import Chatbot from '../components/Chatbot'; // Ensure Chatbot remains on the Dashboard
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [selectedDoc, setSelectedDoc] = useState(null);
-  const [collaborators, setCollaborators] = useState([]);
-  const [newCollaborator, setNewCollaborator] = useState('');
-  const [role, setRole] = useState('Viewer'); // Default role
+  const [profilePic, setProfilePic] = useState(null);
+  const [userPhone] = useState(localStorage.getItem('userPhone') || '9876543210'); // Dummy user phone number
+
   const navigate = useNavigate();
 
   const documentTypes = [
@@ -25,22 +25,49 @@ const Dashboard = () => {
 
   const handleGenerateDocument = () => {
     if (selectedDoc) {
-      navigate(`/generate-document/${selectedDoc}`);
+      navigate(`/legal-forms/${selectedDoc}`);
     }
   };
 
-  const addCollaborator = () => {
-    if (/^\d{10}$/.test(newCollaborator)) { // Validate 10-digit phone number
-      setCollaborators([...collaborators, { phone: newCollaborator, role }]);
-      setNewCollaborator('');
-      setRole('Viewer'); // Reset to default role
-    } else {
-      alert("Please enter a valid 10-digit phone number.");
+  const handleProfilePicChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePic(reader.result);
+        localStorage.setItem('profilePic', reader.result); // Store in local storage
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   return (
     <Box textAlign="center" className="dashboard-container">
+      {/* 🟢 User Profile Section */}
+      <Card sx={styles.profileCard}>
+        <CardContent>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleProfilePicChange}
+            style={{ display: 'none' }}
+            id="profile-upload"
+          />
+          <label htmlFor="profile-upload">
+            <Avatar
+              src={profilePic || localStorage.getItem('profilePic')}
+              sx={{ width: 100, height: 100, cursor: 'pointer', margin: '0 auto' }}
+            >
+              {!profilePic && <PersonIcon sx={{ fontSize: 50 }} />}
+            </Avatar>
+          </label>
+          <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
+            Logged in as: <span style={{ color: '#1E88E5' }}>{userPhone}</span>
+          </Typography>
+        </CardContent>
+      </Card>
+
+      {/* 🟢 Feature Cards */}
       <Typography variant="h4" fontWeight="bold" sx={{ mb: 2, color: '#333' }}>
         Welcome to Legal Vault
       </Typography>
@@ -48,7 +75,6 @@ const Dashboard = () => {
         Securely manage, verify, and collaborate on your legal documents with blockchain.
       </Typography>
 
-      {/* Feature Cards */}
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12} sm={6} md={4}>
           <Card sx={styles.featureCard}>
@@ -75,7 +101,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
 
-      {/* Document Type Selection */}
+      {/* 🟢 Document Type Selection */}
       <Typography variant="h5" fontWeight="bold" sx={{ mt: 5, mb: 2 }}>
         Select Document Type
       </Typography>
@@ -100,7 +126,7 @@ const Dashboard = () => {
         ))}
       </Grid>
 
-      {/* Generate Document Button */}
+      {/* 🟢 Generate Document Button */}
       <Button
         variant="contained"
         sx={{
@@ -114,55 +140,7 @@ const Dashboard = () => {
         Generate Document
       </Button>
 
-      {/* Multi-User Collaboration Section */}
-      <Box sx={{ mt: 5, p: 3, borderRadius: 3, boxShadow: '0px 5px 10px rgba(0,0,0,0.1)', background: '#F9F9F9' }}>
-        <Typography variant="h5" fontWeight="bold">Collaborate with Others</Typography>
-        <Typography variant="subtitle1" sx={{ mb: 2, color: '#666' }}>
-          Invite team members to collaborate on your legal documents.
-        </Typography>
-
-        {/* Add Collaborator Input */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 3 }}>
-          <TextField
-            label="Enter 10-digit phone number"
-            variant="outlined"
-            value={newCollaborator}
-            onChange={(e) => setNewCollaborator(e.target.value)}
-            sx={{ width: '250px' }}
-          />
-          <Select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            variant="outlined"
-            sx={{ width: '150px' }}
-          >
-            <MenuItem value="Viewer">Viewer</MenuItem>
-            <MenuItem value="Editor">Editor</MenuItem>
-            <MenuItem value="Signer">Signer</MenuItem>
-          </Select>
-          <Button
-            variant="contained"
-            startIcon={<PersonAddIcon />}
-            onClick={addCollaborator}
-            sx={{ backgroundColor: '#43A047', '&:hover': { backgroundColor: '#388E3C' } }}
-          >
-            Add
-          </Button>
-        </Box>
-
-        {/* Collaborators List */}
-        {collaborators.length > 0 && (
-          <List>
-            {collaborators.map((collab, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={`📱 ${collab.phone}`} secondary={`Role: ${collab.role}`} />
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Box>
-
-      {/* Chatbot in Bottom Right */}
+      {/* 🟢 Chatbot */}
       <Chatbot />
     </Box>
   );
@@ -172,6 +150,16 @@ export default Dashboard;
 
 // ✅ STYLES
 const styles = {
+  profileCard: {
+    borderRadius: 3,
+    boxShadow: '0px 5px 10px rgba(0,0,0,0.1)',
+    textAlign: 'center',
+    padding: 3,
+    marginBottom: 3,
+    backgroundColor: '#f5f5f5',
+    maxWidth: '350px',
+    margin: 'auto',
+  },
   featureCard: {
     borderRadius: 3,
     boxShadow: '0px 5px 10px rgba(0,0,0,0.1)',
